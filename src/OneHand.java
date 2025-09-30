@@ -10,36 +10,55 @@ public class OneHand extends Poker
         for (Card c : defDeck)
             System.out.println(c.name + " -> " + c.id);
 
-        Card[] hand = new Card[5];
         printDashedLine();
 
-        for (int i = 0; i < 5; ++i)
-            hand[i] = new Card( getID(scn, (i+1)) );
+        // create a new hand with desired values
+        Card[] hand = createExactHand(scn);
 
-        System.out.println("\n" + evaluateHand(hand));
-
-
+        if (hand != null)
+        {
+            printHand(hand);
+            System.out.println("\n" + evaluateHand(hand));
+        }
+        else
+            System.out.println("\nERROR");
 
     }
 
-
-    public static int getID(Scanner scn, int count)
+    public static Card[] createExactHand(Scanner scn)
     {
-        String input;
-        int output;
+        Card[] output = new Card[5];
+        int current = 0;
 
-        do {
-            System.out.print("Enter card ID "+count+": ");
-            input = scn.next();
+        System.out.print("Enter input: (00_00_00_00_00_): ");
+        String input = scn.next();
 
-            try {
-                output =Integer.parseInt(input);
+        for (int i = 0 ; i < input.length(); ++i)
+        {
+            if (input.charAt(i) == '_')
+            {
+                String numStr = input.charAt(i-2) + "" + input.charAt(i-1);
+                int num;
+
+                try {
+                    num = Integer.parseInt(numStr);
+                }
+                catch (NumberFormatException e) {
+                    return null;
+                }
+
+                if (num < 0 || num > 52)
+                    return null;
+
+                output[current] = new Card(num);
+                ++current;
             }
-            catch (NumberFormatException e) {
-                output = -1;
-            }
-        } while (output < 0 || output > 51);
+        }
 
-        return output;
+        if (current == 5)
+            return output;
+        else
+            return null;
     }
+
 }
